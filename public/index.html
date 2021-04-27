@@ -50,8 +50,8 @@
 
   //creates jsoneditor
   var jsoneditor = new JSONEditor(document.getElementById('jsoneditor1'), {
-    mode: 'code',
-    modes: ['code', 'form', 'text', 'tree', 'view'],
+    mode: 'form',
+    modes: ['code', 'text', 'form', 'tree', 'view'],
     onChangeText: function (jsonString) {
       updateRoom(jsonString);
     }

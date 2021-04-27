@@ -44,22 +44,17 @@ function attachBackendApi(args) {
 function attachPublisher(args) {
   args = assertObject(args);
   //
-  let {config, app} = args;
-  assert(config != null, "[config] must be not null");
+  let { app } = args;
   assert(app != null, "[app] must be not null");
   //
-  if (config.basepath) {
-    app = app.use(config.basepath, app);
-  }
-
   let server = http.createServer(app);
-
+  //
   let io = socketio(server);
   io.adapter(pm2Adapter());
   io.origins('*:*');
-
+  //
   let socket_rooms = {};
-
+  //
   io.on('connection', function (socket) {
     localog('Socket[%s] connected from %s', socket.id, socket.conn.remoteAddress);
 
@@ -100,4 +95,4 @@ let chain = [
 
 let output = chain.reduce(function(prevArgs, operator) {
   return operator(prevArgs);
-}, {config: config});
+}, {});
