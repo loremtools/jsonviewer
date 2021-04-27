@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link href="/jsoneditor.css" rel="stylesheet" type="text/css">
+  <script src="/jsoneditor.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script>
+    var socket = io();
+  </script>
+</head>
+<body>
+<div class="container-fluid"></div>
+  <div class="row">
+    <div class="col-sm-9" id="jsoneditor1"></div>
+    <div class="col-sm-3" id="channelbox">
+      <form action="" method="post">
+        <div class="form-group">
+          <label for="channelId">Channel</label>
+          <input type="text" class="form-control" id="channelId" aria-describedby="Channel name" placeholder="Enter email">
+        </div>
+        <button onClick="connectToRoom();" class="btn btn-primary">Connect</button>
+        <div id="connected_info" class="d-inline p-2 bg-primary text-white"></div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  var channelId = null;
+  var connected = false;
+
+  function genChannelID() {
+    return Date.now().toString();
+  }
+
+  function connectToRoom(){
+    channelId = document.getElementById('channelId').value;
+    socket.emit('join_room',channelId);
+    connected = true;
+    if (connected) {
+      document.getElementById('connected_info').innerHTML = "Connected";
+    }
+  }
+
+  function updateRoom(msg){
+    socket.emit('editor_update', channelId, msg);
+  }
+
+  //creates jsoneditor
+  var jsoneditor = new JSONEditor(document.getElementById('jsoneditor1'), {
+    mode: 'code',
+    modes: ['code', 'form', 'text', 'tree', 'view'],
+    onChangeText: function (jsonString) {
+      updateRoom(jsonString);
+    }
+  });
+
+  //set initial data
+  jsoneditor.set({});
+
+  //generate a random channelId to start
+  channelId = genChannelID();
+  connected = false;
+
+  //marker for knowing when we are connected
+  document.getElementById('channelId').value = channelId;
+
+  socket.on('editor_update',function(msg){
+    jsoneditor.updateText(msg);
+  });
+
+  socket.on('reconnect',function(){
+    if(connected){
+      connectToRoom();
+    }
+  });
+
+  $("form").on('submit',function(e){
+      e.preventDefault();
+  });
+</script>
+</body>
+</html>
