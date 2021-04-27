@@ -19,7 +19,7 @@
       <form action="" method="post">
         <div class="form-group">
           <label for="channelId">Channel</label>
-          <input type="text" class="form-control" id="channelId" aria-describedby="Channel name" placeholder="Enter email">
+          <input type="text" class="form-control" id="channelId" aria-describedby="Channel name">
         </div>
         <button onClick="connectToRoom();" class="btn btn-primary">Connect</button>
         <div id="connected_info" class="d-inline p-2 bg-primary text-white"></div>
@@ -37,7 +37,7 @@
 
   function connectToRoom(){
     channelId = document.getElementById('channelId').value;
-    socket.emit('join_room',channelId);
+    socket.emit('join_channel',channelId);
     connected = true;
     if (connected) {
       document.getElementById('connected_info').innerHTML = "Connected";

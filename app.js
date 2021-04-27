@@ -31,11 +31,11 @@ function attachBackendApi(args) {
   assert(app != null, "[app] must be not null");
   assert(io != null, "[io] must be not null");
   //
-  app.put('/api/update/:roomId',function(req, res, next) {
-    let roomId = req.params.roomId;
+  app.put('/api/update/:channelId',function(req, res, next) {
+    let channelId = req.params.channelId;
     let jsonText = JSON.stringify(req.body);
-    localog("Send a JSON object (size: %d) to channel: %s", jsonText.length, roomId);
-    io.in(roomId).emit('editor_update', jsonText);
+    localog("Send a JSON object (size: %d) to channel: %s", jsonText.length, channelId);
+    io.in(channelId).emit('editor_update', jsonText);
     res.send('ok');
   });
   return args;
@@ -53,7 +53,7 @@ function attachPublisher(args) {
   io.adapter(pm2Adapter());
   io.origins('*:*');
   //
-  let socket_rooms = {};
+  let channels = {};
   //
   io.on('connection', function (socket) {
     localog('Socket[%s] connected from %s', socket.id, socket.conn.remoteAddress);
@@ -62,18 +62,18 @@ function attachPublisher(args) {
       localog('Socket[%d] disconnected ', socket.id);
     });
 
-    socket.on('editor_update', function (room, msg) {
-      socket.to(room).emit('editor_update',msg);
+    socket.on('editor_update', function (channelId, msg) {
+      socket.to(channelId).emit('editor_update',msg);
     });
 
-    socket.on('join_room', function(room){
-      if(socket_rooms[socket.id]){
-        socket.leave(socket_rooms[socket.id]);
+    socket.on('join_channel', function(channelId){
+      if(channels[socket.id]){
+        socket.leave(channels[socket.id]);
       }
-      localog("Socket[%s] joining room[%s]", socket.id, room);
-      socket.join(room);
-      //keep track the socket room
-      socket_rooms[socket.id] = room;
+      localog("Socket[%s] joining channel[%s]", socket.id, channelId);
+      socket.join(channelId);
+      //keep track the socket channel
+      channels[socket.id] = channelId;
     });
   });
 
