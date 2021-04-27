@@ -1,9 +1,10 @@
 
-var config = require('./config.js');
-var express = require('express');
-var http = require('http');
-var socketio = require('socket.io');
+const config = require('./config.js');
+const express = require('express');
+const http = require('http');
+const socketio = require('socket.io');
 const pm2Adapter = require('socket.io-pm2');
+const { assert } = require('console');
 
 function assertObject(args) {
   return args || {};
@@ -15,26 +16,24 @@ function localog(msg, ...args) {
 
 function buildMiddleware(args) {
   args = assertObject(args);
-  var config = assertObject(args.config);
   //
-  var app = express();
+  let app = express();
   //
   app.use(express.static('public'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   //
-  app.get('/api/help',function(req, res, next) {
-    res.send('test');
-  });
-  return {app: app};
+  return Object.assign(args, { app });
 }
 
 function attachBackendApi(args) {
-  var app = args.app;
-  var io = args.io;
+  let {app, io} = args;
+  assert(app != null, "[app] must be not null");
+  assert(io != null, "[io] must be not null");
+  //
   app.put('/api/update/:roomId',function(req, res, next) {
-    var roomId = req.params.roomId;
-    var jsonText = JSON.stringify(req.body);
+    let roomId = req.params.roomId;
+    let jsonText = JSON.stringify(req.body);
     localog("Send a JSON object (size: %d) to channel: %s", jsonText.length, roomId);
     io.in(roomId).emit('editor_update', jsonText);
     res.send('ok');
@@ -42,25 +41,24 @@ function attachBackendApi(args) {
   return args;
 }
 
-function attachContentUpdater(args) {
+function attachPublisher(args) {
   args = assertObject(args);
-  var config = assertObject(args.config);
-  var app = assertObject(args.app);
-
+  //
+  let {config, app} = args;
+  assert(config != null, "[config] must be not null");
+  assert(app != null, "[app] must be not null");
+  //
   if (config.basepath) {
     app = app.use(config.basepath, app);
   }
 
-  var server = http.createServer(app);
-  args.server = server;
+  let server = http.createServer(app);
 
-  var io = socketio(server);
+  let io = socketio(server);
   io.adapter(pm2Adapter());
-  args.io = io;
-
   io.origins('*:*');
 
-  var socket_rooms = {};
+  let socket_rooms = {};
 
   io.on('connection', function (socket) {
     localog('Socket[%s] connected from %s', socket.id, socket.conn.remoteAddress);
@@ -84,13 +82,22 @@ function attachContentUpdater(args) {
     });
   });
 
-  return args;
+  return Object.assign(args, { server, io });
 }
 
 function startServer(args) {
-  var server = args.server;
+  let server = args.server;
   console.log('Server listening on: ' + config.port);
   server.listen(config.port);
 }
 
-startServer(attachBackendApi(attachContentUpdater(buildMiddleware({ config: config }))));
+let chain = [
+  buildMiddleware,
+  attachPublisher,
+  attachBackendApi,
+  startServer
+];
+
+let output = chain.reduce(function(prevArgs, operator) {
+  return operator(prevArgs);
+}, {config: config});
