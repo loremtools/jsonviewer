@@ -28,3 +28,22 @@
   ```
 * Enjoy!
 
+## Running with PM2
+
+Environment variables:
+
+* `JSONVIEWER__SERVER__HOST`: The host name of the server (default: 0.0.0.0);
+* `JSONVIEWER__SERVER__PORT`: The port of the server (default: 3000);
+* `JSONVIEWER__PM2__INSTANCES`: Number of PM2 workers (default: 1);
+
+Start app with pm2:
+
+```shell
+pm2 start pm2.config.js
+```
+
+## References
+
+* [Nodejs - Express documentation](https://expressjs.com/en/4x/api.html)
+* [Nodejs - socket.io documentation](https://socket.io/docs/v2)
+* [JSON Editor github repository](https://github.com/josdejong/jsoneditor)
