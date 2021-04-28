@@ -28,7 +28,7 @@ function buildMiddleware(args) {
   let app = express();
   //
   app.use(express.static('public'));
-  app.use(express.json());
+  app.use(express.json({ limit: config.body_maxsize }));
   app.use(express.urlencoded({ extended: true }));
   //
   return Object.assign(args, { app });
@@ -93,9 +93,12 @@ function attachPublisher(args) {
 }
 
 function startServer(args) {
-  let server = args.server;
-  console.log('Server listening on: ' + config.port);
-  server.listen(config.port);
+  let { server } = args;
+  const s = server.listen(config.port, config.host, function () {
+    let port = s.address().port;
+    let host = s.address().address;
+    console.log('webserver is listening on http://%s:%s', host, port);
+  });
 }
 
 let chain = [
@@ -105,6 +108,6 @@ let chain = [
   startServer
 ];
 
-let output = chain.reduce(function(prevArgs, operator) {
+chain.reduce(function(prevArgs, operator) {
   return operator(prevArgs);
 }, {});
