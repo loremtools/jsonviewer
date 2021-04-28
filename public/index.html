@@ -45,7 +45,7 @@
   }
 
   function updateRoom(msg){
-    socket.emit('editor_update', channelId, msg);
+    socket.emit('update_editor', channelId, msg);
   }
 
   //creates jsoneditor
@@ -67,7 +67,7 @@
   //marker for knowing when we are connected
   document.getElementById('channelId').value = channelId;
 
-  socket.on('editor_update',function(msg){
+  socket.on('update_editor',function(msg){
     jsoneditor.updateText(msg);
   });
 

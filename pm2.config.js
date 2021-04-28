@@ -3,11 +3,10 @@ module.exports = {
     {
       "name": "jsonviewer",
       "script": "app.js",
-      "instances": process.env["JSONVIEWER__INSTANCES"] || 1,
-      "out_file": "/dev/null",
-      "error_file": "/dev/null",
+      "instances": process.env["JSONVIEWER__PM2__INSTANCES"] || 1,
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "development",
+        "JSONVIEWER__PM2__ENABLED": "true"
       },
       "env_production" : {
         "NODE_ENV": "production"

@@ -4,8 +4,8 @@
   "description": "Online JSON Viewer",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.16.3",
-    "socket.io": "^2.1.1",
+    "express": "^4.17.1",
+    "socket.io": "^2.4.1",
     "socket.io-pm2": "^1.0.0"
   },
   "devDependencies": {},

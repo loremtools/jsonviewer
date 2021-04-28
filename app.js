@@ -1,4 +1,6 @@
 
+'use strict';
+
 const config = require('./config.js');
 const express = require('express');
 const http = require('http');
@@ -12,6 +14,12 @@ function assertObject(args) {
 
 function localog(msg, ...args) {
   console.log.call(console, msg, ...args);
+}
+
+function isPm2Enabled() {
+  let enabled = process.env["JSONVIEWER__PM2__ENABLED"] === "true";
+  localog("is the PM2 enabled? ", enabled);
+  return enabled;
 }
 
 function buildMiddleware(args) {
@@ -35,7 +43,7 @@ function attachBackendApi(args) {
     let channelId = req.params.channelId;
     let jsonText = JSON.stringify(req.body);
     localog("Send a JSON object (size: %d) to channel: %s", jsonText.length, channelId);
-    io.in(channelId).emit('editor_update', jsonText);
+    io.in(channelId).emit('update_editor', jsonText);
     res.send('ok');
   });
   return args;
@@ -50,7 +58,11 @@ function attachPublisher(args) {
   let server = http.createServer(app);
   //
   let io = socketio(server);
-  io.adapter(pm2Adapter());
+  //
+  if (isPm2Enabled()) {
+    io.adapter(pm2Adapter());
+  }
+  //
   io.origins('*:*');
   //
   let channels = {};
@@ -59,11 +71,11 @@ function attachPublisher(args) {
     localog('Socket[%s] connected from %s', socket.id, socket.conn.remoteAddress);
 
     socket.on('disconnect', function(){
-      localog('Socket[%d] disconnected ', socket.id);
+      localog('Socket[%s] disconnected ', socket.id);
     });
 
-    socket.on('editor_update', function (channelId, msg) {
-      socket.to(channelId).emit('editor_update',msg);
+    socket.on('update_editor', function (channelId, msg) {
+      socket.to(channelId).emit('update_editor',msg);
     });
 
     socket.on('join_channel', function(channelId){
