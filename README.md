@@ -1,5 +1,7 @@
 # Online JSONViewer
 
+![Architecture](https://raw.github.com/loremtools/jsonviewer/master/docs/images/jsonviewer-workflow.png)
+
 ## Getting started
 
 * Checkout source code from the github repository (https://github.com/loremtools/jsonviewer);
