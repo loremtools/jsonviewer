@@ -5,7 +5,7 @@
 ## Getting started
 
 * Checkout source code from the github repository (https://github.com/loremtools/jsonviewer);
-* Changes current working directory to `server` in project home folder;
+* Changes project home folder into current working directory;
 * Installs the dependencies:
   ```shell
   npm install
