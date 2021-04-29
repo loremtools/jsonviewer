@@ -2,7 +2,7 @@ module.exports = {
   apps : [
     {
       "name": "jsonviewer",
-      "script": "app.js",
+      "script": "lib/app.js",
       "instances": process.env["JSONVIEWER__PM2__INSTANCES"] || 1,
       "env": {
         "NODE_ENV": "development",
