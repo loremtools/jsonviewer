@@ -4,8 +4,14 @@
 
 ## Getting started
 
-* Checkout source code from the github repository (https://github.com/loremtools/jsonviewer);
-* Changes project home folder into current working directory;
+* Checkout source code from the github repository (https://github.com/loremtools/jsonviewer):
+  ```shell
+  git clone https://github.com/loremtools/jsonviewer.git
+  ```
+* Changes project home folder into current working directory:
+  ```shell
+  cd jsonviewer
+  ```
 * Installs the dependencies:
   ```shell
   npm install
@@ -41,6 +47,24 @@ Start app with pm2:
 
 ```shell
 pm2 start pm2.config.js
+```
+
+Show the console log messages from the pm2:
+
+```shell
+pm2 log jsonviewer
+```
+
+Stop the `jsonviewer` service:
+
+```shell
+pm2 stop jsonviewer
+```
+
+Delete the `jsonviewer` service:
+
+```shell
+pm2 delete jsonviewer
 ```
 
 ## References
