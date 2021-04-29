@@ -28,14 +28,14 @@
   ```
 * Enjoy!
 
-## Running with PM2
-
-Environment variables:
+## Environment variables
 
 * `JSONVIEWER__SERVER__HOST`: The host name of the server (default: 0.0.0.0);
 * `JSONVIEWER__SERVER__PORT`: The port of the server (default: 3000);
 * `JSONVIEWER__SERVER__BODY_MAXSIZE`: The limit size of HTTP request body (default: 100KB);
 * `JSONVIEWER__PM2__INSTANCES`: Number of PM2 workers (default: 1);
+
+## Running with PM2
 
 Start app with pm2:
 

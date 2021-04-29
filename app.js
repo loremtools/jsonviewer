@@ -22,12 +22,19 @@ function isPm2Enabled() {
   return enabled;
 }
 
+function getStaticDir() {
+  if (process.env["JSONVIEWER__REACT__ENABLED"] === "true") {
+    return 'public/ui';
+  }
+  return 'public';
+}
+
 function buildMiddleware(args) {
   args = assertObject(args);
   //
   let app = express();
   //
-  app.use(express.static('public'));
+  app.use(express.static(getStaticDir()));
   app.use(express.json({ limit: config.body_maxsize }));
   app.use(express.urlencoded({ extended: true }));
   //

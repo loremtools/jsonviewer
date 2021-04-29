@@ -3,4 +3,5 @@ node_modules
 .npmrc
 /lib
 /log
+/public/ui
 *.log
