@@ -1,6 +1,7 @@
-node_modules
-.idea
-.npmrc
 /log
 /public/ui
+node_modules
+/package-lock.json
+.idea
+.npmrc
 *.log
